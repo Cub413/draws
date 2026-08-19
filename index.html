@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Bonto Draw</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#111;
+    font-family:Arial,sans-serif;
+}
+
+
+/* =========================================
+   PÁGINA
+========================================= */
+
+#page{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+}
+
+
+/* =========================================
+   PANEL DE CARGA
+========================================= */
+
+#loading{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:9999;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#111;
+
+    color:white;
+
+    transition:
+        opacity .8s ease,
+        visibility .8s ease;
+
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo{
+
+    font-size:42px;
+
+    font-weight:bold;
+
+    margin-bottom:25px;
+
+    letter-spacing:1px;
+
+}
+
+
+.logo span{
+    color:#5865f2;
+}
+
+
+/* =========================================
+   CÍRCULO
+========================================= */
+
+.loader{
+
+    width:55px;
+    height:55px;
+
+    border-radius:50%;
+
+    border:5px solid #333;
+
+    border-top-color:#5865f2;
+
+    animation:
+        spin 1s linear infinite;
+
+}
+
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+
+/* =========================================
+   TEXTO
+========================================= */
+
+#loadingText{
+
+    margin-top:20px;
+
+    color:#aaa;
+
+    font-size:15px;
+
+}
+
+
+#progress{
+
+    margin-top:8px;
+
+    color:#666;
+
+    font-size:13px;
+
+}
+
+
+/* =========================================
+   OCULTO
+========================================= */
+
+#loading.hidden{
+
+    opacity:0;
+
+    visibility:hidden;
+
+    pointer-events:none;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================
+     PÁGINA REAL
+========================================= -->
+
+<iframe
+    id="page"
+    src="https://remsisk.bonto.run/"
+></iframe>
+
+
+<!-- ========================================
+     CARGA
+========================================= -->
+
+<div id="loading">
+
+    <div class="logo">
+        Bonto<span>Draw</span>
+    </div>
+
+    <div class="loader"></div>
+
+    <div id="loadingText">
+        Preparando el servidor...
+    </div>
+
+    <div id="progress">
+        0%
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =========================================
+   CONFIGURACIÓN
+========================================= */
+
+/*
+    Tiempo mínimo:
+    30 segundos
+
+    Tiempo máximo:
+    60 segundos
+*/
+
+const MIN_TIME = 30000;
+const MAX_TIME = 60000;
+
+
+/* =========================================
+   TIEMPO ALEATORIO
+========================================= */
+
+const loadTime =
+    Math.floor(
+        Math.random() *
+        (MAX_TIME - MIN_TIME + 1)
+    ) + MIN_TIME;
+
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+
+const progress =
+    document.getElementById(
+        "progress"
+    );
+
+
+const loadingText =
+    document.getElementById(
+        "loadingText"
+    );
+
+
+const start =
+    Date.now();
+
+
+/* =========================================
+   ANIMACIÓN DE PROGRESO
+========================================= */
+
+const progressTimer =
+    setInterval(() => {
+
+        const elapsed =
+            Date.now() - start;
+
+
+        let percent =
+            Math.floor(
+                (elapsed / loadTime) * 100
+            );
+
+
+        percent =
+            Math.min(
+                99,
+                percent
+            );
+
+
+        progress.textContent =
+            percent + "%";
+
+
+        if(percent < 30){
+
+            loadingText.textContent =
+                "Preparando el servidor...";
+
+        }
+        else if(percent < 60){
+
+            loadingText.textContent =
+                "Conectando...";
+
+        }
+        else if(percent < 90){
+
+            loadingText.textContent =
+                "Cargando Draw Together...";
+
+        }
+        else{
+
+            loadingText.textContent =
+                "Casi listo...";
+
+        }
+
+    },100);
+
+
+/* =========================================
+   TERMINAR
+========================================= */
+
+setTimeout(() => {
+
+    clearInterval(
+        progressTimer
+    );
+
+
+    progress.textContent =
+        "100%";
+
+
+    loadingText.textContent =
+        "Listo";
+
+
+    setTimeout(() => {
+
+        loading.classList.add(
+            "hidden"
+        );
+
+    },500);
+
+
+},loadTime);
+
+
+</script>
+
+
+</body>
+
+</html>
